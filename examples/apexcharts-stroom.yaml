@@ -18,6 +18,14 @@ yaxis:
   - min: 0
     decimals: 2
 apex_config:
+  tooltip:
+    x:
+      # Show the hour the price applies to, e.g. 16:00 - 17:00.
+      formatter: |
+        EVAL:function(value) {
+          const time = (ms) => new Date(ms).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+          return time(value) + ' - ' + time(value + 3600000);
+        }
   legend:
     show: false
   plotOptions:
@@ -28,7 +36,7 @@ series:
     name: Nu
     type: column
     unit: €/kWh
-    float_precision: 3
+    float_precision: 2
     show:
       in_header: raw
     # Light blue for normal hours, dark blue for expensive hours. Adjust to taste.

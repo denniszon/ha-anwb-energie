@@ -13,12 +13,21 @@ now:
 yaxis:
   - min: 0
     decimals: 2
+apex_config:
+  tooltip:
+    x:
+      # Show the hour the price applies to, e.g. 16:00 - 17:00.
+      formatter: |
+        EVAL:function(value) {
+          const time = (ms) => new Date(ms).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+          return time(value) + ' - ' + time(value + 3600000);
+        }
 series:
   - entity: sensor.anwb_energie_gas_all_in
     name: Nu
     type: column
     unit: €/m³
-    float_precision: 3
+    float_precision: 2
     color: "#e08a2c"
     show:
       in_header: raw
