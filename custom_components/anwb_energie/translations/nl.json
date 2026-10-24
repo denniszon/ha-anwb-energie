@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ANWB Energie",
+        "description": "Voegt de uurtarieven voor stroom en gas van ANWB Energie toe. Een account is niet nodig."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "ANWB Energie is al ingesteld."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "stroom_all_in": {
+        "name": "Stroom all-in"
+      },
+      "stroom_marktprijs": {
+        "name": "Stroom marktprijs"
+      },
+      "gas_all_in": {
+        "name": "Gas all-in"
+      },
+      "gas_marktprijs": {
+        "name": "Gas marktprijs"
+      },
+      "stroom_laagste_vandaag": {
+        "name": "Stroom laagste vandaag"
+      },
+      "stroom_gemiddeld_vandaag": {
+        "name": "Stroom gemiddeld vandaag"
+      },
+      "stroom_hoogste_vandaag": {
+        "name": "Stroom hoogste vandaag"
+      }
+    }
+  }
+}

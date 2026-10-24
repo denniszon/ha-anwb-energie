@@ -1,0 +1,13 @@
+{
+  "domain": "anwb_energie",
+  "name": "ANWB Energie",
+  "codeowners": ["@denniszon"],
+  "config_flow": true,
+  "documentation": "https://github.com/denniszon/ha-anwb-energie",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/denniszon/ha-anwb-energie/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}

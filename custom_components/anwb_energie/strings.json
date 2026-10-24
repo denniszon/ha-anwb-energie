@@ -1,0 +1,38 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "ANWB Energie",
+        "description": "Adds the hourly electricity and gas tariffs of ANWB Energie. No account is needed."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "ANWB Energie is already configured."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "stroom_all_in": {
+        "name": "Electricity all-in"
+      },
+      "stroom_marktprijs": {
+        "name": "Electricity market price"
+      },
+      "gas_all_in": {
+        "name": "Gas all-in"
+      },
+      "gas_marktprijs": {
+        "name": "Gas market price"
+      },
+      "stroom_laagste_vandaag": {
+        "name": "Electricity lowest today"
+      },
+      "stroom_gemiddeld_vandaag": {
+        "name": "Electricity average today"
+      },
+      "stroom_hoogste_vandaag": {
+        "name": "Electricity highest today"
+      }
+    }
+  }
+}

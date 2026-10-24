@@ -1,0 +1,66 @@
+# Complete card: lowest / average / highest, plus a toggle between all-in and market price.
+# Create the helper first: Settings → Devices & services → Helpers →
+# Toggle, named "ANWB toon marktprijs" (input_boolean.anwb_toon_marktprijs).
+type: vertical-stack
+cards:
+  - type: glance
+    show_icon: false
+    entities:
+      - entity: sensor.anwb_energie_stroom_all_in
+        name: Nu
+      - entity: sensor.anwb_energie_stroom_laagste_vandaag
+        name: Laagst
+      - entity: sensor.anwb_energie_stroom_gemiddeld_vandaag
+        name: Gemiddeld
+      - entity: sensor.anwb_energie_stroom_hoogste_vandaag
+        name: Hoogst
+      - entity: input_boolean.anwb_toon_marktprijs
+        name: Marktprijs
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.anwb_toon_marktprijs
+        state: "off"
+    card:
+      type: custom:apexcharts-card
+      header:
+        show: true
+        title: Stroom all-in
+      graph_span: 48h
+      span:
+        start: day
+      now:
+        show: true
+      yaxis:
+        - decimals: 2
+      series:
+        - entity: sensor.anwb_energie_stroom_all_in
+          type: column
+          unit: €/kWh
+          data_generator: |
+            const hours = [...(entity.attributes.raw_today || []), ...(entity.attributes.raw_tomorrow || [])];
+            return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);
+  - type: conditional
+    conditions:
+      - condition: state
+        entity: input_boolean.anwb_toon_marktprijs
+        state: "on"
+    card:
+      type: custom:apexcharts-card
+      header:
+        show: true
+        title: Stroom marktprijs
+      graph_span: 48h
+      span:
+        start: day
+      now:
+        show: true
+      yaxis:
+        - decimals: 2
+      series:
+        - entity: sensor.anwb_energie_stroom_marktprijs
+          type: column
+          unit: €/kWh
+          data_generator: |
+            const hours = [...(entity.attributes.raw_today || []), ...(entity.attributes.raw_tomorrow || [])];
+            return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);

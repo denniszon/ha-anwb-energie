@@ -1,0 +1,45 @@
+# ANWB-style bar chart for today and tomorrow (all-in electricity price).
+# Requires apexcharts-card (HACS → Frontend).
+# For the market price: replace the entity with sensor.anwb_energie_stroom_marktprijs.
+type: custom:apexcharts-card
+header:
+  show: true
+  title: Stroomprijs (all-in)
+  show_states: true
+graph_span: 48h
+span:
+  start: day
+now:
+  show: true
+  label: Nu
+experimental:
+  color_threshold: true
+yaxis:
+  - min: 0
+    decimals: 2
+apex_config:
+  legend:
+    show: false
+  plotOptions:
+    bar:
+      borderRadius: 3
+series:
+  - entity: sensor.anwb_energie_stroom_all_in
+    name: Nu
+    type: column
+    unit: €/kWh
+    float_precision: 3
+    show:
+      in_header: raw
+    # Light blue for normal hours, dark blue for expensive hours. Adjust to taste.
+    color_threshold:
+      - value: 0
+        color: "#4a9be0"
+      - value: 0.22
+        color: "#163a86"
+    data_generator: |
+      const hours = [
+        ...(entity.attributes.raw_today || []),
+        ...(entity.attributes.raw_tomorrow || []),
+      ];
+      return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);

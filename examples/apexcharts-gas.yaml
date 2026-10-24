@@ -1,0 +1,30 @@
+# Gas price for today and tomorrow. The gas day runs from 06:00 to 06:00.
+type: custom:apexcharts-card
+header:
+  show: true
+  title: Gasprijs (all-in)
+  show_states: true
+graph_span: 48h
+span:
+  start: day
+now:
+  show: true
+  label: Nu
+yaxis:
+  - min: 0
+    decimals: 2
+series:
+  - entity: sensor.anwb_energie_gas_all_in
+    name: Nu
+    type: column
+    unit: €/m³
+    float_precision: 3
+    color: "#e08a2c"
+    show:
+      in_header: raw
+    data_generator: |
+      const hours = [
+        ...(entity.attributes.raw_today || []),
+        ...(entity.attributes.raw_tomorrow || []),
+      ];
+      return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);
