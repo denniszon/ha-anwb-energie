@@ -15,8 +15,9 @@ now:
 experimental:
   color_threshold: true
 yaxis:
-  # No minimum of 0, so negative prices stay visible.
-  - decimals: 2
+  # Start the scale 5 cents below the lowest price, so the cheapest bar stays visible.
+  - min: "|-0.05|"
+    decimals: 2
 apex_config:
   tooltip:
     x:

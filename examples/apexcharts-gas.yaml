@@ -11,7 +11,8 @@ now:
   show: true
   label: Nu
 yaxis:
-  - min: 0
+  # Start the scale 5 cents below the lowest price, so the cheapest bar stays visible.
+  - min: "|-0.05|"
     decimals: 2
 apex_config:
   tooltip:

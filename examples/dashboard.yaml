@@ -34,7 +34,9 @@ cards:
       experimental:
         color_threshold: true
       yaxis:
-        - decimals: 2
+        # Start the scale 5 cents below the lowest price, so the cheapest bar stays visible.
+        - min: "|-0.05|"
+          decimals: 2
       apex_config:
         tooltip:
           x:
@@ -88,7 +90,9 @@ cards:
       experimental:
         color_threshold: true
       yaxis:
-        - decimals: 2
+        # Start the scale 5 cents below the lowest price, so the cheapest bar stays visible.
+        - min: "|-0.05|"
+          decimals: 2
       apex_config:
         tooltip:
           x:
