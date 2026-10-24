@@ -1,7 +1,12 @@
 {
   "domain": "anwb_energie",
   "name": "ANWB Energie",
-  "codeowners": ["@denniszon"],
+  "categories": [
+    "energy.energy_prices"
+  ],
+  "codeowners": [
+    "@denniszon"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/denniszon/ha-anwb-energie",
   "integration_type": "service",
