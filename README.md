@@ -57,7 +57,8 @@ Installeer [apexcharts-card](https://github.com/RomRider/apexcharts-card) via
 HACS (Frontend). Voorbeelden staan in [`examples/`](examples/):
 
 - [`apexcharts-stroom.yaml`](examples/apexcharts-stroom.yaml): staafgrafiek
-  vandaag + morgen, met 6 kleuren van goedkoop (groen) tot duur (rood) en een
+  vandaag + morgen, met 7 kleuren: blauw bij een negatieve prijs (je krijgt
+  geld terug), daarna van goedkoop (groen) tot duur (rood) en een
   "nu"-markering.
 - [`apexcharts-gas.yaml`](examples/apexcharts-gas.yaml): hetzelfde voor gas.
 - [`dashboard.yaml`](examples/dashboard.yaml): laagst/gemiddeld/hoogst en een

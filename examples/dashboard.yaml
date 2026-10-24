@@ -49,21 +49,23 @@ cards:
           type: column
           unit: €/kWh
           float_precision: 2
-          # 6 colours from cheap (green) to expensive (red). Each bar gets the colour
-          # of the highest boundary it reaches. Adjust the values to your prices.
-          # < 0.10 | 0.10 | 0.15 | 0.20 | 0.25 | >= 0.30 €/kWh (all-in)
+          # 7 colours: blue for negative prices, then green (cheap) to red (expensive).
+          # Each bar gets the colour of the highest boundary it reaches. Adjust to taste.
+          # < 0 (you get paid) | 0 | 0.10 | 0.17 | 0.24 | 0.32 | >= 0.40 €/kWh (all-in)
           color_threshold:
+            - value: -5.00
+              color: "#4575b4"
             - value: 0.00
               color: "#1a9850"
             - value: 0.10
               color: "#91cf60"
-            - value: 0.15
+            - value: 0.17
               color: "#d9ef8b"
-            - value: 0.20
+            - value: 0.24
               color: "#fee08b"
-            - value: 0.25
+            - value: 0.32
               color: "#fc8d59"
-            - value: 0.30
+            - value: 0.40
               color: "#d73027"
           data_generator: |
             const hours = [...(entity.attributes.raw_today || []), ...(entity.attributes.raw_tomorrow || [])];
@@ -101,21 +103,23 @@ cards:
           type: column
           unit: €/kWh
           float_precision: 2
-          # 6 colours from cheap (green) to expensive (red). Each bar gets the colour
-          # of the highest boundary it reaches. Adjust the values to your prices.
-          # < 0.00 | 0.00 | 0.05 | 0.08 | 0.11 | >= 0.14 €/kWh (market price)
+          # 7 colours: blue for negative prices, then green (cheap) to red (expensive).
+          # Each bar gets the colour of the highest boundary it reaches. Adjust to taste.
+          # < 0 (you get paid) | 0 | 0.03 | 0.08 | 0.13 | 0.20 | >= 0.27 €/kWh (market price)
           color_threshold:
-            - value: -1.00
-              color: "#1a9850"
+            - value: -5.00
+              color: "#4575b4"
             - value: 0.00
+              color: "#1a9850"
+            - value: 0.03
               color: "#91cf60"
-            - value: 0.05
-              color: "#d9ef8b"
             - value: 0.08
+              color: "#d9ef8b"
+            - value: 0.13
               color: "#fee08b"
-            - value: 0.11
+            - value: 0.20
               color: "#fc8d59"
-            - value: 0.14
+            - value: 0.27
               color: "#d73027"
           data_generator: |
             const hours = [...(entity.attributes.raw_today || []), ...(entity.attributes.raw_tomorrow || [])];
