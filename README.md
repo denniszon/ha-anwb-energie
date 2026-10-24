@@ -61,6 +61,11 @@ HACS (Frontend). Voorbeelden staan in [`examples/`](examples/):
   geld terug), daarna van goedkoop (groen) tot duur (rood) en een
   "nu"-markering.
 - [`apexcharts-gas.yaml`](examples/apexcharts-gas.yaml): hetzelfde voor gas.
+- [`apexcharts-stroom-brush.yaml`](examples/apexcharts-stroom-brush.yaml):
+  brede staven voor 18 uur vanaf nu, met daaronder een overzicht van vandaag en
+  morgen waarin je de selectie versleept om verder te kijken.
+- [`dashboard-brush.yaml`](examples/dashboard-brush.yaml): hetzelfde als
+  `dashboard.yaml`, maar met de brush-grafiek.
 - [`dashboard.yaml`](examples/dashboard.yaml): laagst/gemiddeld/hoogst en een
   schakelaar tussen all-in en marktprijs (met een `input_boolean`-helper).
 

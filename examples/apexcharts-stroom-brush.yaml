@@ -1,0 +1,114 @@
+# Brush variant: the small chart below shows today and tomorrow. The top chart
+# shows 18 hours with wide bars, starting at the current hour. Drag the selection
+# in the small chart to scroll through the rest of today and tomorrow.
+# Requires apexcharts-card (HACS → Frontend). No card-mod needed.
+# For the market price: see dashboard-brush.yaml (other entity and colours).
+# Rounded bars do not show on iPhone/iPad/Safari: ApexCharts disables them there.
+type: custom:apexcharts-card
+header:
+  show: true
+  title: Stroomprijs (all-in)
+  show_states: true
+graph_span: 48h
+span:
+  start: day
+now:
+  show: true
+  label: Nu
+experimental:
+  color_threshold: true
+  brush: true
+brush:
+  # Hours visible in the top chart. Fewer hours means wider bars.
+  selection_span: 18h
+  apex_config:
+    chart:
+      events:
+        # The card always starts the selection at the end of the overview.
+        # Move it once to the current hour (18 hours wide, like selection_span).
+        updated: |
+          EVAL:function(brush) {
+            if (brush.anwbSelectionMoved) return;
+            brush.anwbSelectionMoved = true;
+            const span = 18 * 3600000;
+            const start = new Date();
+            start.setMinutes(0, 0, 0);
+            const max = Math.min(start.getTime() + span, brush.w.globals.maxX);
+            const min = max - span;
+            const main = brush.constructor.getChartByID(brush.w.config.chart.brush.target);
+            brush.updateOptions({ chart: { selection: { xaxis: { min: min, max: max } } } }, false, false);
+            if (main) main.updateOptions({ xaxis: { min: min, max: max } }, false, false);
+          }
+yaxis:
+  # Start the scale 5 cents below the lowest price, so the cheapest bar stays visible.
+  - min: "|-0.05|"
+    decimals: 2
+apex_config:
+  tooltip:
+    x:
+      # Show the hour the price applies to, e.g. 16:00 - 17:00.
+      formatter: |
+        EVAL:function(value) {
+          const time = (ms) => new Date(ms).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+          return time(value) + ' - ' + time(value + 3600000);
+        }
+  legend:
+    show: false
+  plotOptions:
+    bar:
+      # Bars fill 85% of their hour instead of the default 70%.
+      columnWidth: "85%"
+      # Rounded tops; the bottom of the bars stays square.
+      borderRadius: 6
+      borderRadiusApplication: end
+series:
+  - entity: sensor.anwb_energie_stroom_all_in
+    name: Nu
+    type: column
+    unit: €/kWh
+    float_precision: 2
+    show:
+      in_header: raw
+      # Colour the current price in the header with the same colours.
+      header_color_threshold: true
+    # 7 colours: blue for negative prices, then green (cheap) to red (expensive).
+    # Each bar gets the colour of the highest boundary it reaches. Adjust to taste.
+    # < 0 (you get paid) | 0 | 0.10 | 0.17 | 0.24 | 0.32 | >= 0.40 €/kWh (all-in)
+    color_threshold:
+      - value: -5.00
+        color: "#4575b4"
+      - value: 0.00
+        color: "#1a9850"
+      - value: 0.10
+        color: "#91cf60"
+      - value: 0.17
+        color: "#d9ef8b"
+      - value: 0.24
+        color: "#fee08b"
+      - value: 0.32
+        color: "#fc8d59"
+      - value: 0.40
+        color: "#d73027"
+    data_generator: |
+      const hours = [
+        ...(entity.attributes.raw_today || []),
+        ...(entity.attributes.raw_tomorrow || []),
+      ];
+      return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);
+  # Small overview chart (the brush). A line, because columns can glitch in the brush.
+  - entity: sensor.anwb_energie_stroom_all_in
+    type: line
+    curve: stepline
+    stroke_width: 2
+    # Theme colour, so the line is readable in light and dark mode.
+    color: var(--primary-color)
+    show:
+      in_chart: false
+      in_brush: true
+      in_header: false
+    data_generator: |
+      const hours = [
+        ...(entity.attributes.raw_today || []),
+        ...(entity.attributes.raw_tomorrow || []),
+      ];
+      return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);
