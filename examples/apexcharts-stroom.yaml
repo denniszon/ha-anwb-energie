@@ -39,12 +39,24 @@ series:
     float_precision: 2
     show:
       in_header: raw
-    # Light blue for normal hours, dark blue for expensive hours. Adjust to taste.
+      # Colour the current price in the header with the same colours.
+      header_color_threshold: true
+    # 6 colours from cheap (green) to expensive (red). Each bar gets the colour
+    # of the highest boundary it reaches. Adjust the values to your prices.
+    # < 0.10 | 0.10 | 0.15 | 0.20 | 0.25 | >= 0.30 €/kWh (all-in)
     color_threshold:
-      - value: 0
-        color: "#4a9be0"
-      - value: 0.22
-        color: "#163a86"
+      - value: 0.00
+        color: "#1a9850"
+      - value: 0.10
+        color: "#91cf60"
+      - value: 0.15
+        color: "#d9ef8b"
+      - value: 0.20
+        color: "#fee08b"
+      - value: 0.25
+        color: "#fc8d59"
+      - value: 0.30
+        color: "#d73027"
     data_generator: |
       const hours = [
         ...(entity.attributes.raw_today || []),

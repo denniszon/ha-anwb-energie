@@ -31,6 +31,8 @@ cards:
         start: day
       now:
         show: true
+      experimental:
+        color_threshold: true
       yaxis:
         - decimals: 2
       apex_config:
@@ -47,6 +49,22 @@ cards:
           type: column
           unit: €/kWh
           float_precision: 2
+          # 6 colours from cheap (green) to expensive (red). Each bar gets the colour
+          # of the highest boundary it reaches. Adjust the values to your prices.
+          # < 0.10 | 0.10 | 0.15 | 0.20 | 0.25 | >= 0.30 €/kWh (all-in)
+          color_threshold:
+            - value: 0.00
+              color: "#1a9850"
+            - value: 0.10
+              color: "#91cf60"
+            - value: 0.15
+              color: "#d9ef8b"
+            - value: 0.20
+              color: "#fee08b"
+            - value: 0.25
+              color: "#fc8d59"
+            - value: 0.30
+              color: "#d73027"
           data_generator: |
             const hours = [...(entity.attributes.raw_today || []), ...(entity.attributes.raw_tomorrow || [])];
             return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);
@@ -65,6 +83,8 @@ cards:
         start: day
       now:
         show: true
+      experimental:
+        color_threshold: true
       yaxis:
         - decimals: 2
       apex_config:
@@ -81,6 +101,22 @@ cards:
           type: column
           unit: €/kWh
           float_precision: 2
+          # 6 colours from cheap (green) to expensive (red). Each bar gets the colour
+          # of the highest boundary it reaches. Adjust the values to your prices.
+          # < 0.00 | 0.00 | 0.05 | 0.08 | 0.11 | >= 0.14 €/kWh (market price)
+          color_threshold:
+            - value: -1.00
+              color: "#1a9850"
+            - value: 0.00
+              color: "#91cf60"
+            - value: 0.05
+              color: "#d9ef8b"
+            - value: 0.08
+              color: "#fee08b"
+            - value: 0.11
+              color: "#fc8d59"
+            - value: 0.14
+              color: "#d73027"
           data_generator: |
             const hours = [...(entity.attributes.raw_today || []), ...(entity.attributes.raw_tomorrow || [])];
             return hours.map((hour) => [new Date(hour.start).getTime(), hour.value]);
