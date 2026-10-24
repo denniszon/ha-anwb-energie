@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -188,7 +188,8 @@ class AnwbEnergieSensor(CoordinatorEntity[AnwbEnergieCoordinator], SensorEntity)
         now = datetime.now(TIMEZONE)
         today = now.date()
         tomorrow = today + timedelta(days=1)
-        next_hour = price_at(self._points, now + timedelta(hours=1))
+        # Add in UTC: on the autumn DST day, local +1h would skip the repeated hour.
+        next_hour = price_at(self._points, now.astimezone(UTC) + timedelta(hours=1))
 
         return {
             "price_type": price_type,

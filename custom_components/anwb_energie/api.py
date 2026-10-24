@@ -46,9 +46,12 @@ def parse_prices(payload: dict[str, Any]) -> list[PricePoint]:
     points = []
     for item in payload.get("data", []):
         values = item.get("values") or {}
+        start = datetime.fromisoformat(item["date"])
+        if start.tzinfo is None:
+            start = start.replace(tzinfo=TIMEZONE)
         points.append(
             PricePoint(
-                start=datetime.fromisoformat(item["date"]),
+                start=start,
                 all_in=_cents_to_euro(values.get("allInPrijs")),
                 market=_cents_to_euro(values.get("marktprijs")),
             )
@@ -109,7 +112,7 @@ class AnwbEnergieClient:
             ) as response:
                 response.raise_for_status()
                 payload = await response.json()
-        except (aiohttp.ClientError, TimeoutError) as err:
+        except (aiohttp.ClientError, TimeoutError, ValueError) as err:
             raise AnwbEnergieError(
                 f"Error fetching {commodity} tariffs: {err}"
             ) from err

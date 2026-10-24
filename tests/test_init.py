@@ -93,3 +93,28 @@ async def test_api_error_retries_setup(
     await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.state is ConfigEntryState.SETUP_RETRY
+
+
+async def test_next_hour_on_dst_day(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """next_hour does not skip the repeated 02:00 hour when the clock goes back."""
+    payload = json.loads((FIXTURES / "electricity_dst.json").read_text())
+    for hour in payload["data"]:
+        if hour["date"] == "2026-10-25T02:00:00+01:00":
+            hour["values"]["allInPrijs"] = 99
+    aioclient_mock.get(f"{API}/electricity", json=payload)
+    aioclient_mock.get(
+        f"{API}/gas", json=json.loads((FIXTURES / "gas_dst.json").read_text())
+    )
+    freezer.move_to("2026-10-25T02:30:00+02:00")
+    entry = MockConfigEntry(domain=DOMAIN, data={})
+    entry.add_to_hass(hass)
+    await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    state = hass.states.get("sensor.anwb_energie_stroom_all_in")
+    assert float(state.state) == 0.13
+    assert state.attributes["next_hour"] == 0.99
