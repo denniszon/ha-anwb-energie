@@ -1,9 +1,6 @@
 {
-  "domain": "anwb_energie",
+  "domain": "anwb_energie_tarieven",
   "name": "ANWB Energie",
-  "categories": [
-    "energy.energy_prices"
-  ],
   "codeowners": [
     "@denniszon"
   ],
@@ -14,5 +11,5 @@
   "issue_tracker": "https://github.com/denniszon/ha-anwb-energie/issues",
   "requirements": [],
   "single_config_entry": true,
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

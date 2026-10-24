@@ -13,7 +13,7 @@ FIXTURES = Path(__file__).parent / "fixtures"
 
 # Load api.py directly: the package __init__ imports homeassistant.
 _spec = importlib.util.spec_from_file_location(
-    "anwb_energie_api", ROOT / "custom_components" / "anwb_energie" / "api.py"
+    "anwb_energie_api", ROOT / "custom_components" / "anwb_energie_tarieven" / "api.py"
 )
 api = importlib.util.module_from_spec(_spec)
 sys.modules[_spec.name] = api

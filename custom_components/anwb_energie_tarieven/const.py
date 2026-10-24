@@ -2,7 +2,10 @@
 
 from datetime import time, timedelta
 
-DOMAIN = "anwb_energie"
+DOMAIN = "anwb_energie_tarieven"
+# Core has a virtual `anwb_energie` integration, so the domain differs from the
+# entity id prefix.
+ENTITY_ID_PREFIX = "anwb_energie"
 ATTRIBUTION = "Tarieven van ANWB Energie (onofficiële API)"
 
 COMMODITY_ELECTRICITY = "electricity"

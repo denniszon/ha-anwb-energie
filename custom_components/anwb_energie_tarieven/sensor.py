@@ -25,6 +25,7 @@ from .const import (
     COMMODITY_ELECTRICITY,
     COMMODITY_GAS,
     DOMAIN,
+    ENTITY_ID_PREFIX,
     PRICE_ALL_IN,
     PRICE_MARKET,
 )
@@ -145,7 +146,7 @@ class AnwbEnergieSensor(CoordinatorEntity[AnwbEnergieCoordinator], SensorEntity)
         """Initialize the sensor."""
         super().__init__(coordinator)
         self.entity_description = description
-        self.entity_id = f"sensor.{DOMAIN}_{description.key}"
+        self.entity_id = f"sensor.{ENTITY_ID_PREFIX}_{description.key}"
         self._attr_unique_id = f"{coordinator.config_entry.entry_id}_{description.key}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, coordinator.config_entry.entry_id)},
