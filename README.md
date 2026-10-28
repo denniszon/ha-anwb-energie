@@ -48,6 +48,10 @@ De vier prijssensoren hebben deze attributen:
 - Elk uur, en de status wisselt precies op het hele uur.
 - Stroomprijzen voor morgen worden tussen 13:00 en 15:00 gepubliceerd. Tussen
   13:00 en 16:00 vraagt de integratie elke 10 minuten opnieuw, tot ze binnen zijn.
+- Lukt het ophalen niet (bijvoorbeeld door een storing bij ANWB of in je
+  netwerk), dan blijven de sensoren de laatst opgehaalde prijzen tonen en
+  probeert de integratie het elke 5 minuten opnieuw. Zijn er geen prijzen meer
+  voor het huidige uur, dan worden de sensoren `unavailable`.
 - Gas gaat per gasdag (06:00 tot 06:00). Een uur zonder gepubliceerde prijs geeft
   `unknown`.
 

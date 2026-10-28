@@ -1,5 +1,6 @@
 """Set up the integration in Home Assistant with mocked API responses."""
 
+from datetime import timedelta
 import json
 from pathlib import Path
 
@@ -88,11 +89,93 @@ async def test_api_error_retries_setup(
 ) -> None:
     """A failing API leaves the entry in setup-retry."""
     aioclient_mock.get(f"{API}/electricity", status=500)
+    aioclient_mock.get(f"{API}/gas", status=500)
     entry = MockConfigEntry(domain=DOMAIN, data={})
     entry.add_to_hass(hass)
     await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
     assert entry.state is ConfigEntryState.SETUP_RETRY
+
+
+async def test_api_error_keeps_last_prices(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """A failed update keeps the last prices and retries after 5 minutes."""
+    freezer.move_to("2026-10-25T18:30:00+01:00")
+    entry = await _setup(hass, aioclient_mock)
+
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(f"{API}/electricity", exc=TimeoutError)
+    aioclient_mock.get(f"{API}/gas", exc=TimeoutError)
+    freezer.tick(timedelta(hours=1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert aioclient_mock.call_count == 2
+    assert entry.runtime_data.update_interval == timedelta(minutes=5)
+    # Still available, with the 19:00 price from the earlier response.
+    assert float(hass.states.get("sensor.anwb_energie_stroom_all_in").state) == 0.26
+
+    # Recovers at the next attempt, 5 minutes later instead of an hour.
+    aioclient_mock.clear_requests()
+    payload = json.loads((FIXTURES / "electricity_dst.json").read_text())
+    for hour in payload["data"]:
+        if hour["date"] == "2026-10-25T19:00:00+01:00":
+            hour["values"]["allInPrijs"] = 99
+    aioclient_mock.get(f"{API}/electricity", json=payload)
+    aioclient_mock.get(
+        f"{API}/gas", json=json.loads((FIXTURES / "gas_dst.json").read_text())
+    )
+    freezer.tick(timedelta(minutes=5))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert aioclient_mock.call_count == 2
+    assert entry.runtime_data.update_interval == timedelta(hours=1)
+    assert float(hass.states.get("sensor.anwb_energie_stroom_all_in").state) == 0.99
+
+
+async def test_gas_error_keeps_new_electricity_prices(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """When only gas fails, the newly fetched electricity prices are used."""
+    freezer.move_to("2026-10-25T18:30:00+01:00")
+    await _setup(hass, aioclient_mock)
+
+    aioclient_mock.clear_requests()
+    payload = json.loads((FIXTURES / "electricity_dst.json").read_text())
+    for hour in payload["data"]:
+        if hour["date"] == "2026-10-25T19:00:00+01:00":
+            hour["values"]["allInPrijs"] = 99
+    aioclient_mock.get(f"{API}/electricity", json=payload)
+    aioclient_mock.get(f"{API}/gas", exc=TimeoutError)
+    freezer.tick(timedelta(hours=1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert float(hass.states.get("sensor.anwb_energie_stroom_all_in").state) == 0.99
+    assert hass.states.get("sensor.anwb_energie_gas_all_in").state != "unavailable"
+
+
+async def test_outdated_prices_become_unavailable(
+    hass: HomeAssistant,
+    aioclient_mock: AiohttpClientMocker,
+    freezer: FrozenDateTimeFactory,
+) -> None:
+    """Once the last prices no longer cover the current hour, the update fails."""
+    freezer.move_to("2026-10-25T18:30:00+01:00")
+    await _setup(hass, aioclient_mock)
+
+    aioclient_mock.clear_requests()
+    aioclient_mock.get(f"{API}/electricity", exc=TimeoutError)
+    aioclient_mock.get(f"{API}/gas", exc=TimeoutError)
+    # Tomorrow's prices were never published in the fixture.
+    freezer.move_to("2026-10-26T01:30:00+01:00")
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    state = hass.states.get("sensor.anwb_energie_stroom_all_in")
+    assert state.state == "unavailable"
 
 
 async def test_next_hour_on_dst_day(

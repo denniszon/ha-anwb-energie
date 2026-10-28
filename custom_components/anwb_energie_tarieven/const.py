@@ -21,3 +21,5 @@ PUBLISH_WINDOW_START = time(13, 0)
 PUBLISH_WINDOW_END = time(16, 0)
 UPDATE_INTERVAL = timedelta(hours=1)
 RETRY_INTERVAL = timedelta(minutes=10)
+# After a failed request the last prices stay in use; try again soon.
+FAILURE_RETRY_INTERVAL = timedelta(minutes=5)
